@@ -4,7 +4,7 @@ import pandas as pd
 
 def fetch_product_data():
     conn = sqlite3.connect('products.db')
-    query = '''SELECT link, title, price, properties, img FROM products'''
+    query = '''SELECT link, title, price, img FROM products'''
     df = pd.read_sql_query(query, conn)
     conn.close()
     return df
@@ -13,7 +13,7 @@ def main():
     st.set_page_config(layout="wide")
     st.title("Online Shop")
     st.header("Products")
-    
+
     products = fetch_product_data()
 
     items_per_page = 4
@@ -27,15 +27,15 @@ def main():
         product = products.iloc[idx]
         col1, col2 = st.columns([2, 5])
         with col1:
-            st.image(product['img'], width=150)
+            st.image(product['img'], width=200)  # Increased image width
         with col2:
-            st.write(f"### {product['title']}")
-            st.write(f"**Price:** {product['price']}")
-            st.write(f"**Properties:** {product['properties']}")
+            st.markdown(f"### {product['title']}")  # Larger title text
+            st.markdown(f"**Price:** {product['price']}")  # Larger price text
             st.markdown(
                 f'<a target="_blank" href="{product["link"]}" style="text-decoration:none"><div style="display:inline-block;background-color:blue;color:black;padding:10px;border-radius:5px;">View on eBay</div></a>',
                 unsafe_allow_html=True
             )
+        st.write("---")  # Adds horizontal line for spacing and separation
 
     st.write("")
     st.write("")
@@ -52,19 +52,7 @@ def main():
 
     st.write("")
     st.write("")
-
-    st.markdown(
-        """
-        <style>
-        .stButton > button {
-            background-color: red;
-            color: black;
-            border: 2px solid black;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
+    page_number = st.slider("Page", 1, total_pages, page_number, key="slider")
 
 if __name__ == "__main__":
     if 'page_number' not in st.session_state:
